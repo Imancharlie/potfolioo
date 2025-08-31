@@ -1,4 +1,6 @@
-# Django
+# Add the unwanted files/patterns
+git add .
+git status  # Check what will be committed# Django
 *.pyc
 __pycache__/
 db.sqlite3
