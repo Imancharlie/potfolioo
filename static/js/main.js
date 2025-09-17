@@ -214,6 +214,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
     });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      const isClickInside = navbarMenu.contains(e.target) || menuToggle.contains(e.target);
+      if (!isClickInside && navbarMenu.classList.contains('show')) {
+        menuToggle.click();
+      }
+    });
   }
 
   // Handle lightbox for project images

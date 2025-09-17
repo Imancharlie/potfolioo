@@ -2,7 +2,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import FileResponse
 from django.shortcuts import render, redirect
-from .models import Project, Feedback
+from .models import Project, Feedback, Achievement
+from django.core.mail import send_mail, BadHeaderError
+from django.conf import settings
 from django.contrib import messages
 from django.http import JsonResponse
 from django.http import HttpResponse
@@ -27,9 +29,24 @@ def home(request):
 
         if name and email and subject and message:
             Feedback.objects.create(name=name, email=email, subject=subject, message=message)
+            try:
+                full_message = f"From: {name} <{email}>\n\n{message}"
+                send_mail(
+                    subject=subject,
+                    message=full_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=["emmanuelcharles362@gmail.com"],
+                    fail_silently=False,
+                )
+                messages.success(request, "Your message has been sent successfully.")
+            except BadHeaderError:
+                messages.error(request, "Invalid header found.")
+            except Exception:
+                messages.error(request, "There was an error sending your message. Please try again later.")
             return redirect('home')
 
-    return render(request, 'projects/home.html', {'projects': projects})
+    achievements = Achievement.objects.filter(is_active=True)
+    return render(request, 'projects/home.html', {'projects': projects, 'achievements': achievements})
 
 def project_detail(request, slug):
     project = get_object_or_404(Project, slug=slug)

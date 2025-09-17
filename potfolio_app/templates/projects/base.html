@@ -18,7 +18,7 @@
     <!-- Custom CSS -->
 
 <link rel="stylesheet" href="{% static 'css/main.css' %}">
-<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/main.js' %}" defer></script>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -67,6 +67,16 @@
         </nav>
     </header>
     <main id="content">
+        {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
     <!-- Back to top button -->
